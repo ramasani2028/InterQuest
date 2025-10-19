@@ -22,9 +22,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final ProfileService profileService; // <-- ADDED ProfileService injection
+    private final ProfileService profileService;
 
-    // U1: Register new users
     @Transactional
     public void registerNewUser(RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -34,20 +33,16 @@ public class AuthService {
         User newUser = new User();
         newUser.setEmail(request.getEmail());
         newUser.setName(request.getName());
-        // 1. Encrypt password using BCrypt
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
         newUser.setRole(Role.ROLE_STUDENT);
 
         userRepository.save(newUser);
 
-        // Logic: Create a default Profile entity (U2) and link it to newUser.
-        profileService.createDefaultProfile(newUser); // <-- ADDED call to create profile
+        profileService.createDefaultProfile(newUser);
     }
 
-    // U1: Login and generate JWT
     public String authenticateAndGenerateToken(LoginRequest request) {
 
-        // 1. Authenticate credentials using the configured AuthenticationManager
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -55,12 +50,8 @@ public class AuthService {
                 )
         );
 
-        // 2. If authentication succeeds, load the user to generate the token
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found after successful authentication."));
-
-        // 3. Generate the token
-
         return jwtService.generateToken(user.getEmail());
     }
 }

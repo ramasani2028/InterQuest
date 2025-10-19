@@ -10,9 +10,11 @@ import lombok.NoArgsConstructor;
 public class JwtResponse {
 
     private String accessToken;
-    private String tokenType = "Bearer"; // Standard type for JWTs
-
+    private String tokenType = "Bearer";
 
     public JwtResponse(String accessToken) {
+        this.accessToken = accessToken;
+        this.tokenType = "Bearer";
     }
 }
+

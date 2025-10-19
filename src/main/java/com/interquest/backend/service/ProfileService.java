@@ -3,59 +3,57 @@ package com.interquest.backend.service;
 import com.interquest.backend.dto.ProfileDTO;
 import com.interquest.backend.dto.ProfileUpdateDTO;
 import com.interquest.backend.exception.ResourceNotFoundException;
-import com.interquest.backend.model.Profile; // <-- ADDED
-import com.interquest.backend.model.User; // <-- ADDED
-import com.interquest.backend.repository.ProfileRepository; // <-- ADDED (Assumed dependency)
-import lombok.RequiredArgsConstructor; // <-- ADDED
+import com.interquest.backend.model.Profile;
+import com.interquest.backend.model.User;
+import com.interquest.backend.repository.ProfileRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; // <-- ADDED
+import org.springframework.transaction.annotation.Transactional;
 import java.lang.String;
 import java.util.Collections;
-import java.util.List;
 
 @Service
-@RequiredArgsConstructor // <-- ADDED
+@RequiredArgsConstructor
 public class ProfileService {
 
-    // Dependencies: UserRepository, ProfileRepository, ProfileMapper
-    private final ProfileRepository profileRepository; // <-- ADDED
-
-    // U2: Create Default Profile (Called during registration)
+    private final ProfileRepository profileRepository;
     @Transactional
     public void createDefaultProfile(User newUser) {
         Profile profile = new Profile();
         profile.setUser(newUser);
         profile.setBio("Hello! I am a new student user of InterQuest.");
-        profile.setAcademicInterests(Collections.emptyList()); // Default empty list
-
+        profile.setAcademicInterests(Collections.emptyList());
         profileRepository.save(profile);
     }
 
-    // U2: Update Profile
+    @Transactional
     public ProfileDTO updateProfile(String userEmail, ProfileUpdateDTO updateDTO) {
-        // Logic:
-        // 1. Fetch: Retrieve the User/Profile entity using userEmail.
-        // 2. Validate: Check if data in updateDTO is valid (U2 - Validate Information).
-        // 3. Update: Apply changes (name, bio, academic interests) to the Profile entity.
-        // 4. Save: Save the updated Profile entity (U2 - Update Profile Data).
-        // 5. Map: Convert the saved entity back to a ProfileDTO for the response.
+        Profile profile = profileRepository.findByUserEmail(userEmail)
+                .orElseThrow(() -> new ResourceNotFoundException(STR."Profile not found for: \{userEmail}"));
+        profile.getUser().setName(updateDTO.getName());
+        profile.setBio(updateDTO.getBio());
+        profile.setAcademicInterests(updateDTO.getAcademicInterests());
 
-        // Placeholder for mapping and return:
-        System.out.println("Updating profile for: " + userEmail + " with interests: " + updateDTO.getAcademicInterests());
-        return new ProfileDTO(userEmail, "Updated Name", "Updated Bio", Collections.singletonList(String.valueOf(updateDTO.getAcademicInterests())));
+        Profile updatedProfile = profileRepository.save(profile);
+
+        return new ProfileDTO(
+                userEmail,
+                updatedProfile.getUser().getName(),
+                updatedProfile.getBio(),
+                updatedProfile.getAcademicInterests()
+        );
     }
 
-    // U2: Get Profile Details
+    @Transactional(readOnly = true)
     public ProfileDTO getProfileByEmail(String userEmail) {
-        // Logic:
-        // 1. Fetch: Retrieve the Profile entity using userEmail.
-        // 2. Map: Convert the Profile entity to a ProfileDTO.
+        Profile profile = profileRepository.findByUserEmail(userEmail)
+                .orElseThrow(() -> new ResourceNotFoundException(STR."Profile not found for: \{userEmail}"));
 
-        // Placeholder for profile details:
-        if (userEmail.equals("test@example.com")) {
-            return new ProfileDTO(userEmail, "Test Student", "Seeking internships in AI.", List.of("AI/ML", "Java"));
-        } else {
-            throw new ResourceNotFoundException(STR."Profile not found for \{userEmail}");
-        }
+        return new ProfileDTO(
+                userEmail,
+                profile.getUser().getName(),
+                profile.getBio(),
+                profile.getAcademicInterests()
+        );
     }
 }

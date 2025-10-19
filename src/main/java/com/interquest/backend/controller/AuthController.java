@@ -11,28 +11,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-// Import your LoginRequest, RegisterRequest, and JwtResponse DTOs
 
 @RestController
 @RequestMapping("/api/auth")
-@RequiredArgsConstructor // For injecting services
+@RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthService authService; // Your service for registration/JWT logic
+    private final AuthService authService;
 
-    // U1: Register new users
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody RegisterRequest registerRequest) {
-        // Validation check (e.g., if user exists)
-        // Service method to save user and encrypt password
         authService.registerNewUser(registerRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
     }
 
-    // U1: Login and generate JWT
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> loginUser(@RequestBody LoginRequest loginRequest) {
-        // Authenticate user credentials
         String accessToken = authService.authenticateAndGenerateToken(loginRequest);
         return ResponseEntity.ok(new JwtResponse(accessToken));
     }

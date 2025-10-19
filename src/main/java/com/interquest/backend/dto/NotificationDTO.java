@@ -6,11 +6,10 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
 
-// ⬅️ These two annotations are required to make the Builder pattern work.
 @Data
 @Builder
-@NoArgsConstructor // Often useful to have a default constructor
-@AllArgsConstructor // Required for the Builder implementation to initialize all fields
+@NoArgsConstructor
+@AllArgsConstructor
 public class NotificationDTO {
 
     private Long id;

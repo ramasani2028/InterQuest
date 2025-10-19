@@ -10,7 +10,7 @@ public class ProfileDTO {
     private String email;
     private String name;
     private String bio;
-    private List<String> academicInterests; // Mapped from List<String> in Profile entity
+    private List<String> academicInterests;
 
     public ProfileDTO(String email, String name, String bio, List<String> academicInterests) {
         this.email = email;

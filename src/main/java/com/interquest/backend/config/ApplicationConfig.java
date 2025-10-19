@@ -19,14 +19,12 @@ public class ApplicationConfig {
 
     private final UserRepository userRepository;
 
-    // Defines how to load user details from the database (required by Spring Security)
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> (org.springframework.security.core.userdetails.UserDetails) userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+                .orElseThrow(() -> new UsernameNotFoundException(STR."User not found: \{username}"));
     }
 
-    // Provides the AuthenticationProvider with the UserDetailsService and PasswordEncoder
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -35,13 +33,11 @@ public class ApplicationConfig {
         return authProvider;
     }
 
-    // Bean used by the AuthService to handle the /login process
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    // Defines the Password Encoder (BCrypt is used for secure hashing)
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

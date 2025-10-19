@@ -8,11 +8,11 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OpportunityDTO {
-    private Long id; // oppId
+    private Long id;
     private String title;
     private String description;
     private String category;
-    private String deadline; // Sent as a formatted string
+    private String deadline;
 
     public OpportunityDTO(Long id, String title, String description, String deadline) {
         this.id = id;

@@ -24,12 +24,10 @@ public class Notification {
     @Column(nullable = false)
     private boolean isRead = false;
 
-    // Relationship to the User who receives the notification
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User recipient;
 
-    // Relationship to the Opportunity that triggered the notification (if applicable)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "opportunity_id")
     private Opportunity opportunity;

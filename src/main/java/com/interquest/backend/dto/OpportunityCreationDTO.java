@@ -11,6 +11,6 @@ public class OpportunityCreationDTO {
     private String title;
     private String description;
     private String category;
-    private String deadline; // Input date string
+    private String deadline;
 
 }

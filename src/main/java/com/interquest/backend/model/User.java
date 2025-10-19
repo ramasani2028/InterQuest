@@ -14,7 +14,7 @@ import java.util.List;
 @Table(name = "users")
 @Data
 @NoArgsConstructor
-public class User implements UserDetails { // Implement UserDetails for Spring Security
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,24 +24,22 @@ public class User implements UserDetails { // Implement UserDetails for Spring S
     private String email;
 
     @Column(nullable = false)
-    private String password; // Stored as a hash (BCrypt)
+    private String password;
 
     @Column(nullable = false)
     private String name;
 
     @Enumerated(EnumType.STRING)
-    private Role role; // We'll use an Enum for roles (STUDENT, ADMIN)
+    private Role role;
 
-    // --- Relationships ---
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Profile profile;
 
-    // --- UserDetails Implementation ---
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
-    // Implement other required UserDetails methods (getters for username, isAccountExpired, etc.)
+
     @Override public String getUsername() { return email; }
     @Override public boolean isAccountNonExpired() { return true; }
     @Override public boolean isAccountNonLocked() { return true; }

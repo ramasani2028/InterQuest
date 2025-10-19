@@ -21,7 +21,7 @@ import java.util.List;
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
-    private AdminService adminService;
+    private final  AdminService adminService;
 
     // U3/U6: Manually Trigger Web Scraping
     @PostMapping("/scrape/run")

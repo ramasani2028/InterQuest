@@ -22,7 +22,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    // Inject ProfileService/Repository here to create the default profile
+    private final ProfileService profileService; // <-- ADDED ProfileService injection
 
     // U1: Register new users
     @Transactional
@@ -41,7 +41,7 @@ public class AuthService {
         userRepository.save(newUser);
 
         // Logic: Create a default Profile entity (U2) and link it to newUser.
-        // profileService.createDefaultProfile(newUser);
+        profileService.createDefaultProfile(newUser); // <-- ADDED call to create profile
     }
 
     // U1: Login and generate JWT

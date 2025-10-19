@@ -3,15 +3,33 @@ package com.interquest.backend.service;
 import com.interquest.backend.dto.ProfileDTO;
 import com.interquest.backend.dto.ProfileUpdateDTO;
 import com.interquest.backend.exception.ResourceNotFoundException;
+import com.interquest.backend.model.Profile; // <-- ADDED
+import com.interquest.backend.model.User; // <-- ADDED
+import com.interquest.backend.repository.ProfileRepository; // <-- ADDED (Assumed dependency)
+import lombok.RequiredArgsConstructor; // <-- ADDED
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional; // <-- ADDED
 import java.lang.String;
 import java.util.Collections;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor // <-- ADDED
 public class ProfileService {
 
     // Dependencies: UserRepository, ProfileRepository, ProfileMapper
+    private final ProfileRepository profileRepository; // <-- ADDED
+
+    // U2: Create Default Profile (Called during registration)
+    @Transactional
+    public void createDefaultProfile(User newUser) {
+        Profile profile = new Profile();
+        profile.setUser(newUser);
+        profile.setBio("Hello! I am a new student user of InterQuest.");
+        profile.setAcademicInterests(Collections.emptyList()); // Default empty list
+
+        profileRepository.save(profile);
+    }
 
     // U2: Update Profile
     public ProfileDTO updateProfile(String userEmail, ProfileUpdateDTO updateDTO) {

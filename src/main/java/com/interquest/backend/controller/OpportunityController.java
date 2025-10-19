@@ -17,7 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OpportunityController {
 
-    private  OpportunityService opportunityService;
+    private final  OpportunityService opportunityService;
 
     // 1. GET /api/opportunities/matched
     // Retrieves a personalized list of opportunities matched to the user's interests (U4).

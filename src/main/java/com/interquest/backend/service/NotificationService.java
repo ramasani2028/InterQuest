@@ -20,6 +20,7 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
     @Transactional(readOnly = true)
     public List<NotificationDTO> getNotificationsByUserId(String userEmail) {
@@ -49,7 +50,12 @@ public class NotificationService {
     @Transactional
     public Notification createAndSaveNotification(User recipient, String message, Opportunity relatedOpportunity) {
         Notification notification = new Notification(message, recipient, relatedOpportunity);
-        return notificationRepository.save(notification);
+        Notification savedNotification = notificationRepository.save(notification);
+        String subject = relatedOpportunity != null ? "New Opportunity Alert: " + relatedOpportunity.getTitle() : "InterQuest Alert";
+        String body = message;
+
+        emailService.sendNotificationEmail(recipient.getEmail(), subject, body);
+        return savedNotification;
     }
 
     private NotificationDTO convertToDTO(Notification notification) {

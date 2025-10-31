@@ -1,7 +1,7 @@
 package com.interquest.backend.config;
 
 import com.interquest.backend.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,15 +14,26 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-@RequiredArgsConstructor
 public class ApplicationConfig {
 
     private final UserRepository userRepository;
 
+    @Autowired
+    public ApplicationConfig(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> (org.springframework.security.core.userdetails.UserDetails) userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException(STR."User not found: \{username}"));
+        return username -> {
+            var user = userRepository.findByEmail(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+            return org.springframework.security.core.userdetails.User
+                    .withUsername(username)
+                    .password(user.getPassword())
+                    .roles("USER")
+                    .build();
+        };
     }
 
     @Bean
